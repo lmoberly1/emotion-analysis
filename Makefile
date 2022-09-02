@@ -23,7 +23,7 @@ clean:
 	@rm -fr */__pycache__ */*.pyc __pycache__
 	@rm -fr build dist
 	@rm -fr london-emotions-*.dist-info
-	@rm -fr london-emotions.egg-info
+	# @rm -fr london-emotions.egg-info
 
 install:
 	@pip install . -U
