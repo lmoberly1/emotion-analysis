@@ -1,5 +1,5 @@
 
-import LondonEmotions  #updatekey
+import LondonEmotions  # updatekey
 import streamlit as st
 import pydeck as pdk
 import numpy as np
@@ -14,6 +14,7 @@ from tensorflow.python.lib.io import file_io
 
 import os
 mapbox_api_key = os.getenv('MAPBOX_API_KEY')
+
 
 def main():
 
@@ -38,64 +39,70 @@ def main():
     # https://github.com/caiyongji/emoji-list
     ###############################################################################
 
-    ### Dataframe must be loaded before any maps
+    # Dataframe must be loaded before any maps
     data = pd.read_csv("streamlit_prep/predicted_reviews.csv")
     # data = data.drop(columns=['manually_added_emotion', 'joy, sad, worry, anger, neutral'])
-    data.rename(columns={'lng':'lon'}, inplace=True)
+    data.rename(columns={'lng': 'lon'}, inplace=True)
     data.fillna('nan', inplace=True)
 
     # grab top 5 place_id's and convert to dataframe
-    joy_df = data[data['emotion']=='joy'] #
+    joy_df = data[data['emotion'] == 'joy']
     joyest = joy_df['place_id'].value_counts().index.tolist()[:3]
-    top_joy_1 = joy_df.loc[(joy_df['place_id']==joyest[0])][:1]
-    top_joy_2 = joy_df.loc[(joy_df['place_id']==joyest[1])][:1]
-    top_joy_3 = joy_df.loc[(joy_df['place_id']==joyest[2])][:1]
+    top_joy_1 = joy_df.loc[(joy_df['place_id'] == joyest[0])][:1]
+    top_joy_2 = joy_df.loc[(joy_df['place_id'] == joyest[1])][:1]
+    top_joy_3 = joy_df.loc[(joy_df['place_id'] == joyest[2])][:1]
     joy_df = pd.concat([top_joy_1, top_joy_2, top_joy_3])
 
-    sad_df = data[data['emotion']=='sadness']
+    sad_df = data[data['emotion'] == 'sadness']
     saddest = sad_df['place_id'].value_counts().index.tolist()[:3]
-    top_sad_1 = sad_df.loc[(sad_df['place_id']==saddest[0])][:1]
-    top_sad_2 = sad_df.loc[(sad_df['place_id']==saddest[1])][:1]
-    top_sad_3 = sad_df.loc[(sad_df['place_id']==saddest[2])][:1]
+    top_sad_1 = sad_df.loc[(sad_df['place_id'] == saddest[0])][:1]
+    top_sad_2 = sad_df.loc[(sad_df['place_id'] == saddest[1])][:1]
+    top_sad_3 = sad_df.loc[(sad_df['place_id'] == saddest[2])][:1]
     sad_df = pd.concat([top_sad_1, top_sad_2, top_sad_3])
 
-    worry_df = data[data['emotion']=='worry']
+    worry_df = data[data['emotion'] == 'worry']
     full_worry_df = worry_df   # for a combine heatmap
     worriest = worry_df['place_id'].value_counts().index.tolist()[:3]
-    top_worry_1 = worry_df.loc[(worry_df['place_id']==worriest[0])][:1]
-    top_worry_2 = worry_df.loc[(worry_df['place_id']==worriest[1])][:1]
-    top_worry_3 = worry_df.loc[(worry_df['place_id']==worriest[2])][:1]
+    top_worry_1 = worry_df.loc[(worry_df['place_id'] == worriest[0])][:1]
+    top_worry_2 = worry_df.loc[(worry_df['place_id'] == worriest[1])][:1]
+    top_worry_3 = worry_df.loc[(worry_df['place_id'] == worriest[2])][:1]
     worry_df = pd.concat([top_worry_1, top_worry_2, top_worry_3])
 
-    anger_df = data[data['emotion']=='anger']
+    anger_df = data[data['emotion'] == 'anger']
     full_anger_df = anger_df   # for a combine heatmap
     angriest = anger_df['place_id'].value_counts().index.tolist()[:3]
-    top_anger_1 = anger_df.loc[(anger_df['place_id']==angriest[0])][:1]
-    top_anger_2 = anger_df.loc[(anger_df['place_id']==angriest[1])][:1]
-    top_anger_3 = anger_df.loc[(anger_df['place_id']==angriest[2])][:1]
+    top_anger_1 = anger_df.loc[(anger_df['place_id'] == angriest[0])][:1]
+    top_anger_2 = anger_df.loc[(anger_df['place_id'] == angriest[1])][:1]
+    top_anger_3 = anger_df.loc[(anger_df['place_id'] == angriest[2])][:1]
     anger_df = pd.concat([top_anger_1, top_anger_2, top_anger_3])
 
-    full_anger_worry_df = pd.concat([full_worry_df, full_anger_df])   # for a combine heatmap
+    full_anger_worry_df = pd.concat(
+        [full_worry_df, full_anger_df])   # for a combine heatmap
 
-    neutral_df = data[data['emotion']=='neutral']
+    neutral_df = data[data['emotion'] == 'neutral']
     neutralist = neutral_df['place_id'].value_counts().index.tolist()[:3]
-    top_neutral_1 = neutral_df.loc[(neutral_df['place_id']==neutralist[0])][:1]
-    top_neutral_2 = neutral_df.loc[(neutral_df['place_id']==neutralist[1])][:1]
-    top_neutral_3 = neutral_df.loc[(neutral_df['place_id']==neutralist[2])][:1]
+    top_neutral_1 = neutral_df.loc[(
+        neutral_df['place_id'] == neutralist[0])][:1]
+    top_neutral_2 = neutral_df.loc[(
+        neutral_df['place_id'] == neutralist[1])][:1]
+    top_neutral_3 = neutral_df.loc[(
+        neutral_df['place_id'] == neutralist[2])][:1]
     neutral_df = pd.concat([top_neutral_1, top_neutral_2, top_neutral_3])
 
     # define emoji
-    JOY_URL="https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606418659/joy_gabpby.png"
-    SAD_URL="https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606418659/sad_icpf1w.png"
-    WORRY_URL="https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606930161/fear_iyzvsb.png"
-    ANGER_URL="https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606418659/angry_shqypp.png"
-    NEUTRAL_URL="https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606418659/neutral_evi6qa.png"
-    joy_icon = {"url": JOY_URL, "width": 242, "height": 242, "anchorY": 242,}
-    sad_icon = {"url": SAD_URL, "width": 242, "height": 242, "anchorY": 242,}
-    worry_icon = {"url": WORRY_URL, "width": 242, "height": 242, "anchorY": 242,}
-    anger_icon = {"url": ANGER_URL, "width": 242, "height": 242, "anchorY": 242,}
-    neutral_icon = {"url": NEUTRAL_URL, "width": 242, "height": 242, "anchorY": 242,}
-
+    JOY_URL = "https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606418659/joy_gabpby.png"
+    SAD_URL = "https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606418659/sad_icpf1w.png"
+    WORRY_URL = "https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606930161/fear_iyzvsb.png"
+    ANGER_URL = "https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606418659/angry_shqypp.png"
+    NEUTRAL_URL = "https://res.cloudinary.com/dq7pjfkgz/image/upload/v1606418659/neutral_evi6qa.png"
+    joy_icon = {"url": JOY_URL, "width": 242, "height": 242, "anchorY": 242, }
+    sad_icon = {"url": SAD_URL, "width": 242, "height": 242, "anchorY": 242, }
+    worry_icon = {"url": WORRY_URL, "width": 242,
+                  "height": 242, "anchorY": 242, }
+    anger_icon = {"url": ANGER_URL, "width": 242,
+                  "height": 242, "anchorY": 242, }
+    neutral_icon = {"url": NEUTRAL_URL, "width": 242,
+                    "height": 242, "anchorY": 242, }
 
     ###############################################################################
     #   Page presentation starts
@@ -103,7 +110,8 @@ def main():
 
     # Define the sidebar
     st.sidebar.title("London Emotions")
-    menu = st.sidebar.selectbox("Menu", ["Top spots", "Watchout!", "Guess my mood"])
+    menu = st.sidebar.selectbox(
+        "Menu", ["Top spots", "Watchout!", "Guess my mood"])
     st.sidebar.write(" ")
     st.sidebar.write(" ")
     st.sidebar.write("Legends:")
@@ -112,8 +120,6 @@ def main():
     st.sidebar.markdown(":fearful:   Fear")
     st.sidebar.markdown(":rage:   Angry")
     st.sidebar.markdown(":sunglasses:   Neutral")
-
-
 
     if menu == "Top spots":
         # define emoji
@@ -148,10 +154,10 @@ def main():
                 zoom=9,
                 pitch=50,
             ),
-            layers = [
+            layers=[
                 pdk.Layer(
                     'ScatterplotLayer',
-                    data=data,     #updatekey
+                    data=data,  # updatekey
                     get_position='[lon, lat]',
                     # get_color='[200, 30, 0, 160]',
                     get_color='[0, 128, 255, 160]',
@@ -162,7 +168,7 @@ def main():
 
         st.write(" ")
 
-        expander = st.beta_expander("The full emotion map.")
+        expander = st.expander("The full emotion map.")
         expander.image("streamlit_prep/capture.PNG", use_column_width=True)
 
         st.write(" ")
@@ -187,7 +193,7 @@ def main():
                         get_size=3,
                         size_scale=15,
                         get_position=["lon", "lat"],
-                     ),
+                    ),
                     pdk.Layer(
                         type="IconLayer",
                         data=sad_df,
@@ -195,7 +201,7 @@ def main():
                         get_size=3,
                         size_scale=15,
                         get_position=["lon", "lat"],
-                     ),
+                    ),
                     pdk.Layer(
                         type="IconLayer",
                         data=worry_df,
@@ -203,7 +209,7 @@ def main():
                         get_size=3,
                         size_scale=15,
                         get_position=["lon", "lat"],
-                     ),
+                    ),
                     pdk.Layer(
                         type="IconLayer",
                         data=anger_df,
@@ -211,7 +217,7 @@ def main():
                         get_size=3,
                         size_scale=15,
                         get_position=["lon", "lat"],
-                     ),
+                    ),
                     pdk.Layer(
                         type="IconLayer",
                         data=neutral_df,
@@ -219,11 +225,11 @@ def main():
                         get_size=3,
                         size_scale=15,
                         get_position=["lon", "lat"],
-                     ),
+                    ),
                 ],
             ))
 
-            ### Button for google map outer link #https://discuss.streamlit.io/t/how-to-link-a-button-to-a-webpage/1661/4
+            # Button for google map outer link #https://discuss.streamlit.io/t/how-to-link-a-button-to-a-webpage/1661/4
             # joyest = joy_df['place_id'].value_counts().index.tolist()[0]
             # address = f"https://www.google.com/maps/place/?q=place_id:{joyest}"
             # link = f'[Let\'s find out the most joyful place in London]({address})'
@@ -233,7 +239,6 @@ def main():
             # address = f"https://www.google.com/maps/place/?q=place_id:{sadest}"
             # link = f'[Let\'s find out the most depressive place in London]({address})'
             # st.markdown(link, unsafe_allow_html=True)
-
 
     if menu == "Watchout!":
         st.header("Anger & Fear at the same time!")
@@ -257,14 +262,14 @@ def main():
                     get_radius=100,
                 ),
                 pdk.Layer(
-                   'HexagonLayer',
-                   data=full_anger_df,
-                   get_position='[lon, lat]',
-                   radius=150,
-                   elevation_scale=8,
-                   elevation_range=[0, 2000],
-                   get_fill_color='[0, 180, 180, 180]',
-                   extruded=True,
+                    'HexagonLayer',
+                    data=full_anger_df,
+                    get_position='[lon, lat]',
+                    radius=150,
+                    elevation_scale=8,
+                    elevation_range=[0, 2000],
+                    get_fill_color='[0, 180, 180, 180]',
+                    extruded=True,
                 ),
             ],
         ))
@@ -272,8 +277,6 @@ def main():
         # address = f"https://www.google.com/maps/place/?q=place_id:{angriest}"
         # link = f'[Place we should avoid in London!]({address})'
         # st.markdown(link, unsafe_allow_html=True)
-
-
 
     if menu == "Guess my mood":
         # take user input
@@ -306,19 +309,21 @@ def main():
         preds = model.predict(text_pad)
 
         # prep results for presentation
-        angry = str(round(preds[0][0]*100,2))
-        joy = str(round(preds[0][1]*100,2))
-        worry = str(round(preds[0][2]*100,2))
-        neutral = str(round(preds[0][3]*100,2))
-        sad = str(round(preds[0][4]*100,2))
+        angry = str(round(preds[0][0]*100, 2))
+        joy = str(round(preds[0][1]*100, 2))
+        worry = str(round(preds[0][2]*100, 2))
+        neutral = str(round(preds[0][3]*100, 2))
+        sad = str(round(preds[0][4]*100, 2))
 
         # presentation
-        expander = st.beta_expander("From what you are saying, human. I sense you are feeling...")
+        expander = st.expander(
+            "From what you are saying, human. I sense you are feeling...")
         expander.subheader(f":blush:  Joy: {joy}%")
         expander.subheader(f":worried:  Sad: {sad}%")
         expander.subheader(f":fearful:  Fear: {worry}%")
         expander.subheader(f":sunglasses:  Neutral: {neutral}%")
         expander.subheader(f":rage:  Angry: {angry}%")
+
 
 if __name__ == "__main__":
     main()
