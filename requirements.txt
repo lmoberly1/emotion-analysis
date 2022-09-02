@@ -20,5 +20,5 @@ scikit-image==0.17.2
 scikit-learn==0.20.4
 gcsfs==0.6.0
 gensim
-numpy
+numpy==1.18.4
 tensorflow
