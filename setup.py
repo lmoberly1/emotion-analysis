@@ -20,7 +20,6 @@ REQUIRED_PACKAGES = [
     'mlflow',
     'memoized_property',
     'numpy==1.18.4',
-    # 'numpy==1.23',
     'google-cloud-storage==1.26.0',
     'pandas==0.24.2',
     'pandas-profiling==2.9.0',

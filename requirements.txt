@@ -9,7 +9,8 @@ black
 yapf
 python-gitlab
 twine
-numpy==1.18.4
+# numpy==1.18.4
+numpy
 mlflow
 memoized_property
 pydeck
