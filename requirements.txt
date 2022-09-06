@@ -34,6 +34,7 @@ flake8
 black
 yapf
 python-gitlab
+pydeck
 twine
 mlflow
 memoized_property
