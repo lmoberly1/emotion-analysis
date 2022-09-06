@@ -15,10 +15,11 @@ from tensorflow.python.lib.io import file_io
 import os
 
 st.write(
-    "Has environment variables been set:",
+    "Evironment variables have been set:",
     os.environ["MAPBOX_API_KEY"] == st.secrets["MAPBOX_API_KEY"],
 )
 mapbox_api_key = os.getenv('MAPBOX_API_KEY')
+st.write(mapbox_api_key)
 
 
 def main():
