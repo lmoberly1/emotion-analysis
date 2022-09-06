@@ -19,7 +19,6 @@ st.write(
     os.environ["MAPBOX_API_KEY"] == st.secrets["MAPBOX_API_KEY"],
 )
 mapbox_api_key = os.getenv('MAPBOX_API_KEY')
-st.write(mapbox_api_key)
 
 
 def main():
