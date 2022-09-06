@@ -14,10 +14,10 @@ from tensorflow.python.lib.io import file_io
 
 import os
 
-st.write(
-    "Evironment variables have been set:",
-    os.environ["MAPBOX_API_KEY"] == st.secrets["MAPBOX_API_KEY"],
-)
+# st.write(
+#     "Evironment variables have been set:",
+#     os.environ["MAPBOX_API_KEY"] == st.secrets["MAPBOX_API_KEY"],
+# )
 mapbox_api_key = os.getenv('MAPBOX_API_KEY')
 
 
@@ -131,7 +131,6 @@ def main():
         joy_df["emoji"] = None
         for i in joy_df.index:
             joy_df["emoji"][i] = joy_icon
-
         sad_df["emoji"] = None
         for i in sad_df.index:
             sad_df["emoji"][i] = sad_icon
@@ -148,8 +147,9 @@ def main():
         for i in neutral_df.index:
             neutral_df["emoji"][i] = neutral_icon
 
-        st.header("Data points on the map")
-        st.markdown("Data collection spread across London.")
+        st.header("Geographic Location of Data")
+        st.markdown(
+            "Each data point represents one public review of a restaurant or hotel.")
         # st.map(data=data)
         st.pydeck_chart(pdk.Deck(
             map_style='mapbox://styles/mapbox/dark-v10',
@@ -164,8 +164,8 @@ def main():
                     'ScatterplotLayer',
                     data=data,  # updatekey
                     get_position='[lon, lat]',
-                    # get_color='[200, 30, 0, 160]',
-                    get_color='[0, 128, 255, 160]',
+                    get_color='[200, 30, 0, 160]',
+                    # get_color='[0, 128, 255, 160]',
                     get_radius=250,
                 ),
             ],
@@ -179,9 +179,10 @@ def main():
         st.write(" ")
         st.write("_____________________________________________________________")
 
-        st.header("Top 3 spots for each emotions")
-        if st.button('Very emotional spots'):
-            st.write("Top 3 spots for each emotions")
+        st.header("Top 3 Locations for Each Emotion")
+        if st.button('Show Map'):
+            st.write(
+                "Each data point represents a high concentration of the specified emotion.")
             st.pydeck_chart(pdk.Deck(
                 map_style='mapbox://styles/mapbox/dark-v10',
                 initial_view_state=pdk.ViewState(
@@ -246,8 +247,8 @@ def main():
             # st.markdown(link, unsafe_allow_html=True)
 
     if menu == "Watchout!":
-        st.header("Anger & Fear at the same time!")
-        st.subheader("Places to avoid in london.")
+        st.header("Highest Concentrations of Anger and Fear")
+        st.write("These are the places to avoid in London.")
         st.pydeck_chart(pdk.Deck(
             map_style='mapbox://styles/mapbox/dark-v10',
             initial_view_state=pdk.ViewState(
@@ -285,8 +286,8 @@ def main():
 
     if menu == "Guess my mood":
         # take user input
-        st.header("Try it out.")
-        st.subheader("Talk to me and I will guess your mood.")
+        st.header("Try It Out")
+        st.write("Talk to me and I will guess your mood.")
         default = " "
         text = st.text_area(" ", default)
         text_df = {
@@ -322,7 +323,7 @@ def main():
 
         # presentation
         expander = st.expander(
-            "From what you are saying, human. I sense you are feeling...")
+            "From what you are saying, human, I sense you are feeling...")
         expander.subheader(f":blush:  Joy: {joy}%")
         expander.subheader(f":worried:  Sad: {sad}%")
         expander.subheader(f":fearful:  Fear: {worry}%")
