@@ -37,7 +37,7 @@ python-gitlab
 twine
 mlflow
 memoized_property
-numpy==1.18.4
+numpy
 google-cloud-storage==1.26.0
 pandas
 pandas-profiling
